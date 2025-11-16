@@ -1,4 +1,31 @@
 import streamlit as st
+import requests
+import pandas as pd
 
-st.title("Insider Signal")
-st.write("App is deployed successfully! 🚀")
+BACKEND_URL = "https://ceaa9895d94b.ngrok-free.app/webhook/insider-purchases"   # 👉 เปลี่ยนเป็น URL จริงของคุณ
+
+st.title("📈 Insider Signal")
+st.write("ค้นหาธุรกรรมซื้อหุ้นของ Insider (Form 4)")
+
+ticker = st.text_input("Ticker (เช่น AAPL, NVDA, TSLA)", "AAPL")
+
+if st.button("ค้นหา"):
+    url = f"{BACKEND_URL}/insider-purchases"
+    params = {"symbol": ticker}
+
+    with st.spinner("กำลังดึงข้อมูลจาก n8n..."):
+        resp = requests.get(url, params=params)
+
+    if resp.status_code != 200:
+        st.error("เกิดข้อผิดพลาดจาก backend")
+    else:
+        data = resp.json()
+        purchases = data.get("purchases", [])
+
+        if len(purchases) == 0:
+            st.warning("ไม่พบการซื้อหุ้น (Purchase) จาก Insider")
+        else:
+            df = pd.DataFrame(purchases)
+            st.dataframe(df)
+            st.success(f"พบทั้งหมด {len(purchases)} รายการ")
+
