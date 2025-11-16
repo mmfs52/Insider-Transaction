@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 import pandas as pd
 
-BACKEND_URL = "https://ceaa9895d94b.ngrok-free.app/webhook/insider-purchases"   # 👉 เปลี่ยนเป็น URL จริงของคุณ
+BACKEND_URL = "https://ceaa9895d94b.ngrok-free.app/webhook-test/insider-purchases"   # 👉 เปลี่ยนเป็น URL จริงของคุณ
 
 st.title("📈 Insider Signal")
 st.write("ค้นหาธุรกรรมซื้อหุ้นของ Insider (Form 4)")
