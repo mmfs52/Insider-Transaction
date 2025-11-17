@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import requests
 
 BACKEND_URL = "https://fb84f936ca48.ngrok-free.app/webhook-test/insider-purchases"
