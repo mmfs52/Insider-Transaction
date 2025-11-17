@@ -1,8 +1,8 @@
-import streamlit as st
+ import streamlit as st
 import requests
-import pandas as pd
 
 BACKEND_URL = "https://fb84f936ca48.ngrok-free.app/webhook-test/insider-purchases"
+# ตอนย้ายไป production อย่าลืมเปลี่ยนเป็น Production URL นะครับ
 
 st.title("📈 Insider Signal")
 st.write("ค้นหาธุรกรรมซื้อหุ้นของ Insider (Form 4)")
@@ -11,34 +11,27 @@ ticker = st.text_input("Ticker (เช่น AAPL, NVDA, TSLA)", "AAPL")
 
 if st.button("ค้นหา"):
     url = BACKEND_URL
-    params = {"symbol": ticker}
+    params = {"symbol": ticker.strip().upper()}
 
     with st.spinner("กำลังดึงข้อมูลจาก n8n..."):
         resp = requests.get(url, params=params)
 
-    # แสดงผลดิบจาก backend
-    st.write("DEBUG status:", resp.status_code)
-    st.write("DEBUG headers:", resp.headers)
-    st.write("DEBUG raw body:", resp.text)
-
-    # ถ้าไม่ใช่ 200 ก็ไม่ต้องไปต่อ
     if resp.status_code != 200:
-        st.error("เกิดข้อผิดพลาดจาก backend (status != 200)")
-        st.stop()
-
-    # พยายาม parse JSON อย่างปลอดภัย
-    try:
-        data = resp.json()
-    except Exception as e:
-        st.error(f"แปลง JSON ไม่ได้: {e}")
-        st.stop()
-
-    purchases = data.get("purchases", [])
-
-    if len(purchases) == 0:
-        st.warning("ไม่พบการซื้อหุ้น (Purchase) จาก Insider")
+        st.error("เกิดข้อผิดพลาดจาก backend (status code: {})".format(resp.status_code))
     else:
-        df = pd.DataFrame(purchases)
-        st.dataframe(df)
+        try:
+            data = resp.json()
+        except Exception:
+            st.error("ข้อมูลที่ได้รับไม่ใช่ JSON ที่ถูกต้อง")
+        else:
+            purchases = data.get("purchases", [])  # list ที่ผ่านการ filter แล้วจาก n8n
 
+            if len(purchases) == 0:
+                st.warning("ไม่พบการซื้อหุ้น (Purchase) จาก Insider")
+            else:
+                # ถ้าอยากให้เรียบจริง ๆ เอาแค่บรรทัดเดียวนี้ก็พอ
+                st.success("พบการซื้อหุ้น (Purchase) จาก Insider")
+
+                # ถ้าในอนาคตอยากโชว์จำนวนด้วย ก็ปลด comment ได้
+                # st.success(f"พบการซื้อหุ้น (Purchase) จาก Insider จำนวน {len(purchases)} รายการ")
 
