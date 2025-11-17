@@ -16,20 +16,29 @@ if st.button("ค้นหา"):
     with st.spinner("กำลังดึงข้อมูลจาก n8n..."):
         resp = requests.get(url, params=params)
 
-    # 👇 เพิ่มสองบรรทัดนี้เพื่อตรวจ status + เนื้อหา
+    # แสดงผลดิบจาก backend
     st.write("DEBUG status:", resp.status_code)
-    st.write("DEBUG body:", resp.text)
+    st.write("DEBUG headers:", resp.headers)
+    st.write("DEBUG raw body:", resp.text)
 
+    # ถ้าไม่ใช่ 200 ก็ไม่ต้องไปต่อ
     if resp.status_code != 200:
-        st.error("เกิดข้อผิดพลาดจาก backend")
-    else:
-        data = resp.json()
-        purchases = data.get("purchases", [])
+        st.error("เกิดข้อผิดพลาดจาก backend (status != 200)")
+        st.stop()
 
-        if len(purchases) == 0:
-            st.warning("ไม่พบการซื้อหุ้น (Purchase) จาก Insider")
-        else:
-            df = pd.DataFrame(purchases)
-            st.dataframe(df)
+    # พยายาม parse JSON อย่างปลอดภัย
+    try:
+        data = resp.json()
+    except Exception as e:
+        st.error(f"แปลง JSON ไม่ได้: {e}")
+        st.stop()
+
+    purchases = data.get("purchases", [])
+
+    if len(purchases) == 0:
+        st.warning("ไม่พบการซื้อหุ้น (Purchase) จาก Insider")
+    else:
+        df = pd.DataFrame(purchases)
+        st.dataframe(df)
 
 
