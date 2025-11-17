@@ -7,8 +7,7 @@ BACKEND_URL = "https://fb84f936ca48.ngrok-free.app/webhook-test/insider-purchase
 st.title("📈 Insider Signal")
 st.write("ค้นหาธุรกรรมซื้อหุ้นของ Insider (Form 4)")
 
-ticker = st.text_input("Ticker (เช่น AAPL, NVDA, TSLA)", "AAPL")
-
+ticker = st.text_input
 if st.button("ค้นหา"):
     url = f"{BACKEND_URL}/insider-purchases"
     params = {"symbol": ticker}
