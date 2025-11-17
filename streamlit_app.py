@@ -2,12 +2,13 @@ import streamlit as st
 import requests
 import pandas as pd
 
-BACKEND_URL = "https://fb84f936ca48.ngrok-free.app/webhook-test/insider-purchases"   # 👉 เปลี่ยนเป็น URL จริงของคุณ
+BACKEND_URL = " https://fb84f936ca48.ngrok-free.app/webhook-test/insider-purchases"   # 👉 เปลี่ยนเป็น URL จริงของคุณ
 
 st.title("📈 Insider Signal")
 st.write("ค้นหาธุรกรรมซื้อหุ้นของ Insider (Form 4)")
 
-ticker = st.text_input
+ticker = st.text_input("Ticker (เช่น AAPL, NVDA, TSLA)", "AAPL")
+
 if st.button("ค้นหา"):
     url = f"{BACKEND_URL}/insider-purchases"
     params = {"symbol": ticker}
@@ -27,3 +28,4 @@ if st.button("ค้นหา"):
             df = pd.DataFrame(purchases)
             st.dataframe(df)
             st.success(f"พบทั้งหมด {len(purchases)} รายการ")
+
