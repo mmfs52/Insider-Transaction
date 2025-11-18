@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-BACKEND_URL = "https://b501f01d3de3.ngrok-free.app/webhook/insider-purchases"
+BACKEND_URL = "https://n8n.srv982875.hstgr.cloud/webhook-test/insider-purchases123"
 # ตอนย้ายไป production อย่าลืมเปลี่ยนเป็น Production URL นะครับ
 
 st.title("📈 Insider Signal")
